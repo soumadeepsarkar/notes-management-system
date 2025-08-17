@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>College Staff & Notes</title>
+  <style>
+    body{font-family: system-ui, Arial, sans-serif;background:#f6f7fb;margin:0;padding:20px;color:#222}
+    h1{margin:0 0 16px}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+    .card{background:#fff;border-radius:14px;box-shadow:0 4px 16px rgba(0,0,0,.06);padding:16px}
+    label{display:block;margin:6px 0 4px}
+    input,select,textarea{width:100%;padding:10px;border:1px solid #ccc;border-radius:10px}
+    button{padding:10px 14px;border:0;border-radius:12px;background:#4f46e5;color:#fff;cursor:pointer}
+    button.secondary{background:#0ea5e9}
+    table{width:100%;border-collapse:collapse;margin-top:12px}
+    th,td{padding:10px;border-bottom:1px solid #eee;text-align:left}
+    .row-actions button{margin-right:6px}
+    .muted{opacity:.7}
+    .file-link{word-break:break-all}
+    .toolbar{display:flex;gap:10px;align-items:center;margin:10px 0}
+  </style>
+</head>
+<body>
+  <h1>College Staff & Notes</h1>
+  <div class="grid">
+    <div class="card">
+      <h2>Staff</h2>
+      <div class="toolbar">
+        <input id="deptFilter" placeholder="Filter by department (optional)"/>
+        <button onclick="loadStaff()">Reload</button>
+      </div>
+      <form id="staffForm">
+        <input type="hidden" id="staff_id" />
+        <label>Name*</label>
+        <input id="name" required />
+        <label>Designation</label>
+        <input id="designation" />
+        <label>Department</label>
+        <input id="department" />
+        <label>Room</label>
+        <input id="room_number" />
+        <label>Email</label>
+        <input id="email" type="email" />
+        <label>Phone</label>
+        <input id="phone_number" />
+        <label>Other Details</label>
+        <textarea id="other_details"></textarea>
+        <div style="margin-top:10px; display:flex; gap:8px">
+          <button type="submit">Save</button>
+          <button type="button" class="secondary" onclick="resetStaff()">Clear</button>
+        </div>
+      </form>
+      <table id="staffTable">
+        <thead><tr><th>ID</th><th>Name</th><th>Dept</th><th>Room</th><th>Email</th><th>Phone</th><th></th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <h2>Notes</h2>
+      <div class="toolbar">
+        <input id="subFilter" placeholder="Filter by subject code (optional)"/>
+        <button onclick="loadNotes()">Reload</button>
+      </div>
+      <form id="noteForm">
+        <label>Subject Code*</label>
+        <input id="subject_code" required />
+        <label>Subject Name</label>
+        <input id="subject_name" />
+        <label>Uploader Staff ID (optional)</label>
+        <input id="uploader_staff_id" type="number" />
+        <label>Description</label>
+        <textarea id="description"></textarea>
+        <label>File*</label>
+        <input id="file" type="file" accept=".pdf,.doc,.docx,.ppt,.pptx" required />
+        <div style="margin-top:10px">
+          <button type="submit">Upload</button>
+        </div>
+      </form>
+      <table id="notesTable">
+        <thead><tr><th>ID</th><th>Subject</th><th>Uploader</th><th>Uploaded</th><th>File</th><th></th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+
+  <p class="muted">Backend must run at <code>http://localhost:8080</code>. Files are served from <code>/files/&lt;name&gt;</code>.</p>
+
+  <script>
+    const API = 'http://localhost:8080/api';
+
+    // ------- STAFF -------
+    async function loadStaff() {
+      const dept = document.getElementById('deptFilter').value.trim();
+      const url = dept ? `${API}/staff?department=${encodeURIComponent(dept)}` : `${API}/staff`;
+      const res = await fetch(url);
+      const data = await res.json();
+      const tbody = document.querySelector('#staffTable tbody');
+      tbody.innerHTML = '';
+      data.forEach(s => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${s.id}</td>
+          <td>${s.name}</td>
+          <td>${s.department || ''}</td>
+          <td>${s.room_number || ''}</td>
+          <td>${s.email || ''}</td>
+          <td>${s.phone_number || ''}</td>
+          <td class="row-actions">
+            <button onclick='editStaff(${JSON.stringify(s)})'>Edit</button>
+            <button onclick='deleteStaff(${s.id})'>Delete</button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function editStaff(s) {
+      document.getElementById('staff_id').value = s.id;
+      document.getElementById('name').value = s.name;
+      document.getElementById('designation').value = s.designation || '';
+      document.getElementById('department').value = s.department || '';
+      document.getElementById('room_number').value = s.room_number || '';
+      document.getElementById('email').value = s.email || '';
+      document.getElementById('phone_number').value = s.phone_number || '';
+      document.getElementById('other_details').value = s.other_details || '';
+    }
+
+    function resetStaff() {
+      document.getElementById('staffForm').reset();
+      document.getElementById('staff_id').value = '';
+    }
+
+    async function deleteStaff(id) {
+      if (!confirm('Delete this staff?')) return;
+      await fetch(`${API}/staff/${id}`, { method: 'DELETE' });
+      loadStaff();
+    }
+
+    document.getElementById('staffForm').addEventListener('submit', async e => {
+      e.preventDefault();
+      const id = document.getElementById('staff_id').value;
+      const staff = {
+        name: document.getElementById('name').value,
+        designation: document.getElementById('designation').value,
+        department: document.getElementById('department').value,
+        room_number: document.getElementById('room_number').value,
+        email: document.getElementById('email').value,
+        phone_number: document.getElementById('phone_number').value,
+        other_details: document.getElementById('other_details').value
+      };
+      const method = id ? 'PUT' : 'POST';
+      const url = id ? `${API}/staff/${id}` : `${API}/staff`;
+      await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(staff)
+      });
+      resetStaff();
+      loadStaff();
+    });
+
+    // ------- NOTES -------
+    async function loadNotes() {
+      const code = document.getElementById('subFilter').value.trim();
+      const url = code ? `${API}/notes?subject_code=${encodeURIComponent(code)}` : `${API}/notes`;
+      const res = await fetch(url);
+      const data = await res.json();
+      const tbody = document.querySelector('#notesTable tbody');
+      tbody.innerHTML = '';
+      data.forEach(n => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${n.id}</td>
+          <td>${n.subject_code} - ${n.subject_name || ''}</td>
+          <td>${n.uploader ? n.uploader.name : ''}</td>
+          <td>${n.uploaded_at || ''}</td>
+          <td class="file-link"><a href="/files/${n.file_path}" target="_blank">${n.file_path}</a></td>
+          <td><button onclick='deleteNote(${n.id})'>Delete</button></td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    async function deleteNote(id) {
+      if (!confirm('Delete this note?')) return;
+      await fetch(`${API}/notes/${id}`, { method: 'DELETE' });
+      loadNotes();
+    }
+
+    document.getElementById('noteForm').addEventListener('submit', async e => {
+      e.preventDefault();
+      const formData = new FormData();
+      formData.append('subject_code', document.getElementById('subject_code').value);
+      formData.append('subject_name', document.getElementById('subject_name').value);
+      formData.append('uploader_staff_id', document.getElementById('uploader_staff_id').value);
+      formData.append('description', document.getElementById('description').value);
+      formData.append('file', document.getElementById('file').files[0]);
+
+      await fetch(`${API}/notes`, {
+        method: 'POST',
+        body: formData
+      });
+      e.target.reset();
+      loadNotes();
+    });
+
+    // Initial load
+    loadStaff();
+    loadNotes();
+  </script>
+</body>
+</html>
