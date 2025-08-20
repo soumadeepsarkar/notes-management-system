@@ -13,7 +13,7 @@ private String subjectCode;
 private String subject_name;
 @ManyToOne
 @JoinColumn(name = "uploader_staff_id")
-private Staff uploader;
+
 private LocalDateTime upload_date = LocalDateTime.now();
 @Column(nullable = false)
 private String file_path; // relative path under uploads/
@@ -27,8 +27,7 @@ subject_code; }
 public String getSubject_name() { return subject_name; }
 public void setSubject_name(String subject_name) { this.subject_name =
 subject_name; }
-public Staff getUploader() { return uploader; }
-public void setUploader(Staff uploader) { this.uploader = uploader; }
+
 public LocalDateTime getUpload_date() { return upload_date; }
 public void setUpload_date(LocalDateTime upload_date) { this.upload_date =
 upload_date; }

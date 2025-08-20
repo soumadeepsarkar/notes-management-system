@@ -1,8 +1,6 @@
 package com.example.college.controller;
 import com.example.college.entity.Note;
-import com.example.college.entity.Staff;
 import com.example.college.repo.NoteRepository;
-import com.example.college.repo.StaffRepository;
 import com.example.college.service.FileStorageService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -10,18 +8,16 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Optional;
+//import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/notes")
 public class NoteController {
     private final NoteRepository noteRepository;
-    private final StaffRepository staffRepository;
     private final FileStorageService storageService;
 
-    public NoteController(NoteRepository noteRepository, StaffRepository staffRepository, FileStorageService storageService) {
+    public NoteController(NoteRepository noteRepository, FileStorageService storageService) {
         this.noteRepository = noteRepository;
-        this.staffRepository = staffRepository;
         this.storageService = storageService;
     }
 
@@ -57,10 +53,10 @@ public class NoteController {
         note.setDescription(description);
         note.setFile_path(storedName);
 
-        if (uploader_staff_id != null) {
-            Optional<Staff> up = staffRepository.findById(uploader_staff_id);
-            up.ifPresent(note::setUploader);
-        }
+        //if (uploader_staff_id != null) {
+           /// Optional<Staff> up = staffRepository.findById(uploader_staff_id);
+            //up.ifPresent(note::setUploader);
+        //}
 
         Note saved = noteRepository.save(note);
         return ResponseEntity.ok(saved);

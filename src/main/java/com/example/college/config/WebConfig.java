@@ -13,6 +13,7 @@ import java.nio.file.Paths;
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
 // Serve files from the local uploads/ folder at /files/**
+@SuppressWarnings("null")
 public void addResourceHandlers(ResourceHandlerRegistry registry) {
 Path uploadDir = Paths.get("uploads");
 String uploadPath = uploadDir.toFile().getAbsolutePath();

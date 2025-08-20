@@ -1,0 +1,165 @@
+/* 🎨 Theme Variables */
+:root {
+  --bg-color: #6d87f0;
+  --card-color: #7f8eeb;
+  --primary: #4f46e5;
+  --secondary: #0a2784;
+  --text-color: #222;
+  --muted: rgba(0, 0, 0, 0.6);
+  --radius: 14px;
+  --shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+}
+
+/* 🌍 Base Styles */
+body {
+  font-family: system-ui, Arial, sans-serif;
+  background: var(--bg-color);
+  margin: 0;
+  padding: 40px;
+  color: var(--text-color);
+  line-height: 1.6;
+}
+
+/* 📝 Headings */
+h1 {
+  margin: 0 0 16px;
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+
+/* 🔲 Grid Layout */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+/* 📦 Card */
+.card {
+  background: var(--card-color);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 20px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.12);
+}
+
+/* 🏷️ Forms */
+label {
+  display: block;
+  margin: 8px 0 4px;
+  font-weight: 500;
+}
+
+input,
+select,
+textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  font-size: 1rem;
+  transition: border 0.2s ease, box-shadow 0.2s ease;
+}
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.3);
+}
+
+/* 🔘 Buttons */
+button {
+  padding: 12px 18px;
+  border: 0;
+  border-radius: 12px;
+  background: var(--primary);
+  color: #fff;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.15s ease;
+}
+button:hover {
+  background: #4338ca;
+  transform: translateY(-2px);
+}
+button:active {
+  transform: scale(0.97);
+}
+button.secondary {
+  background: var(--secondary);
+}
+button.secondary:hover {
+  background: #08306b;
+}
+
+/* 📊 Tables */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 14px;
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+th {
+  background: rgba(0, 0, 0, 0.05);
+  font-weight: 600;
+}
+th,
+td {
+  padding: 12px;
+  border-bottom: 1px solid #eee;
+  text-align: left;
+}
+tr:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* 🎛️ Toolbar */
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  margin: 14px 0;
+}
+
+/* 📎 Links */
+.file-link {
+  word-break: break-word;
+  color: var(--primary);
+  text-decoration: none;
+}
+.file-link:hover {
+  text-decoration: underline;
+}
+
+/* 💡 Utility Classes */
+.muted {
+  opacity: 0.7;
+  color: var(--muted);
+}
+
+.row-actions button {
+  margin-right: 6px;
+}
+
+/* 📱 Responsive */
+@media (max-width: 600px) {
+  body {
+    padding: 20px;
+  }
+  h1 {
+    font-size: 1.5rem;
+  }
+  button {
+    width: 100%;
+  }
+}
