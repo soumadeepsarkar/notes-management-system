@@ -1,4 +1,4 @@
-const API = 'http://localhost:8080/api';
+const API = 'http://localhost:1111/';
 
    
     // ------- NOTES -------
